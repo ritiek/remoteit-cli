@@ -149,7 +149,7 @@ var connectCmd = &cobra.Command{
 }
 
 func init() {
-	connectCmd.PersistentFlags().String("format", "", "format for proxy connection (currently ssh is only valid value)")
+	connectCmd.PersistentFlags().String("format", "", "format for proxy connection (valid values: ssh, {hostname}, {port}, {lastip}, {address})")
 	viper.BindPFlag("format", loginCmd.PersistentFlags().Lookup("format"))
 
 	connectCmd.PersistentFlags().Bool("nocache", false, "do not use the local device cache, fetch device list fresh from remote.it")
