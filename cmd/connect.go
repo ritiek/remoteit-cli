@@ -110,8 +110,7 @@ var connectCmd = &cobra.Command{
 
 			format, _ := cmd.Flags().GetString("format")
 
-			if format != "ssh" {
-
+			if format == "" {
 				w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 				defer w.Flush()
 
@@ -127,13 +126,23 @@ var connectCmd = &cobra.Command{
 				}
 
 				fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t\n", resp.Connection.Proxy, resp.Connection.DeviceAddress, resp.Status, resp.Connection.ExpirationInSeconds, resp.Connection.RequestedAt)
+
 			} else {
 				p := resp.Connection.Proxy
 				p = strings.Replace(strings.Replace(p, "http://", "", 1), "https://", "", 1)
 
 				parts := strings.Split(p, ":")
 
-				fmt.Printf("%s -p %s", parts[0], parts[1])
+				var formatted_proxy string
+				if format == "ssh" {
+					formatted_proxy = parts[0] + " -p " + parts[1]
+				} else {
+					formatted_proxy = strings.Replace(format, "{hostname}", parts[0], 1)
+					formatted_proxy = strings.Replace(formatted_proxy, "{port}", parts[1], 1)
+					formatted_proxy = strings.Replace(formatted_proxy, "{lastip}", lastIP, 1)
+					formatted_proxy = strings.Replace(formatted_proxy, "{address}", address, 1)
+				}
+				fmt.Printf("%s", formatted_proxy)
 			}
 		}
 	},
